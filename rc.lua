@@ -45,7 +45,7 @@ end
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, font and wallpapers.
-beautiful.init("/home/nicky/.config/awesome/themes/default/theme.lua")
+beautiful.init("/home/nicky/.config/awesome/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
 terminal = "alacritty"
@@ -61,19 +61,19 @@ modkey = "Mod4"
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {
-    awful.layout.suit.floating,
-    awful.layout.suit.tile,
-    awful.layout.suit.tile.left,
-    awful.layout.suit.tile.bottom,
-    awful.layout.suit.tile.top,
-    awful.layout.suit.fair,
-    awful.layout.suit.fair.horizontal,
-    awful.layout.suit.spiral,
-    awful.layout.suit.spiral.dwindle,
     awful.layout.suit.max,
+    awful.layout.suit.tile,
+    awful.layout.suit.floating,
     awful.layout.suit.max.fullscreen,
+    -- awful.layout.suit.tile.left,
+    -- awful.layout.suit.tile.bottom,
+    -- awful.layout.suit.tile.top,
+    awful.layout.suit.fair,
+    -- awful.layout.suit.fair.horizontal,
+    awful.layout.suit.spiral,
+    -- awful.layout.suit.spiral.dwindle,
     awful.layout.suit.magnifier,
-    awful.layout.suit.corner.nw,
+    -- awful.layout.suit.corner.nw,
     -- awful.layout.suit.corner.ne,
     -- awful.layout.suit.corner.sw,
     -- awful.layout.suit.corner.se,
@@ -103,7 +103,7 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 -- }}}
 
 -- Keyboard map indicator and switcher
-mykeyboardlayout = awful.widget.keyboardlayout()
+-- mykeyboardlayout = awful.widget.keyboardlayout()
 
 -- {{{ Wibar
 -- Create a textclock widget
@@ -188,34 +188,34 @@ awful.screen.connect_for_each_screen(function(s)
         buttons = taglist_buttons
     }
 
-    -- Create a tasklist widget
-    s.mytasklist = awful.widget.tasklist {
-        screen  = s,
-        filter  = awful.widget.tasklist.filter.currenttags,
-        buttons = tasklist_buttons
-    }
+    -- -- Create a tasklist widget
+    -- s.mytasklist = awful.widget.tasklist {
+    --     screen  = s,
+    --     filter  = awful.widget.tasklist.filter.currenttags,
+    --     buttons = tasklist_buttons
+    -- }
 
     -- Create the wibox
-    s.mywibox = awful.wibar({ position = "top", screen = s })
+    -- s.mywibox = awful.wibar({ position = "top", screen = s })
 
     -- Add widgets to the wibox
-    s.mywibox:setup {
-        layout = wibox.layout.align.horizontal,
-        { -- Left widgets
-            layout = wibox.layout.fixed.horizontal,
-            mylauncher,
-            s.mytaglist,
-            s.mypromptbox,
-        },
-        s.mytasklist, -- Middle widget
-        { -- Right widgets
-            layout = wibox.layout.fixed.horizontal,
-            mykeyboardlayout,
-            wibox.widget.systray(),
-            mytextclock,
-            s.mylayoutbox,
-        },
-    }
+--     s.mywibox:setup {
+--         layout = wibox.layout.align.horizontal,
+--         { -- Left widgets
+--             layout = wibox.layout.fixed.horizontal,
+--             mylauncher,
+--             s.mytaglist,
+--             s.mypromptbox,
+--         },
+--         s.mytasklist, -- Middle widget
+--         { -- Right widgets
+--             layout = wibox.layout.fixed.horizontal,
+--             mykeyboardlayout,
+--             wibox.widget.systray(),
+--             mytextclock,
+--             s.mylayoutbox,
+--         },
+--     }
 end)
 -- }}}
 
@@ -229,31 +229,8 @@ root.buttons(gears.table.join(
 
 -- {{{ Key bindings
 globalkeys = gears.table.join(
-    awful.key({ modkey, "Control" }, "t",
-      function ()
-        -- toggle titlebar
-        local c = client.focus
-        awful.titlebar.toggle(c)
-    end),
-
-    awful.key({ modkey, "Control", "Shift" }, "t",
-      function ()
-        -- toggle titlebar
-        for _, c in ipairs(client.get()) do
-          -- do something
-          awful.titlebar.show(c)
-        end
-    end),
-
-    awful.key({ modkey, "Shift" }, "t",
-      function ()
-        -- toggle titlebar
-        for _, c in ipairs(client.get()) do
-          -- do something
-          awful.titlebar.hide(c)
-        end
-    end),
-
+    awful.key({ modkey, "Shift"   }, "r",      awesome.restart,
+      {description="open emacs", group="awesome"}),
     awful.key({ modkey,           }, "e",      function () awful.spawn("emc") end,
               {description="open emacs", group="awesome"}),
     awful.key({ modkey,           }, "s",      hotkeys_popup.show_help,
@@ -264,6 +241,23 @@ globalkeys = gears.table.join(
               {description = "view next", group = "tag"}),
     awful.key({ modkey,           }, "Escape", awful.tag.history.restore,
               {description = "go back", group = "tag"}),
+
+    -- volume
+    awful.key({ modkey,           }, "F2", function() awful.spawn("pactl set-sink-volume 0 -1%") end,
+        {description = "volume down", group = "extra"}),
+    awful.key({ modkey,           }, "F3", function() awful.spawn("pactl set-sink-volume 0 +1%") end,
+        {description = "volume up", group = "extra"}),
+
+    -- unminimize all
+    awful.key({ modkey, "Shift"   }, "n",
+        function ()
+            for _, c in ipairs(client.get()) do
+                c.minimized = false
+            end
+
+        end,
+        {description = "focus next by index", group = "client"}
+    ),
 
     awful.key({ modkey,           }, "j",
         function ()
@@ -338,8 +332,8 @@ globalkeys = gears.table.join(
               {description = "restore minimized", group = "client"}),
 
     -- Prompt
-    awful.key({ modkey },            "r",     function () awful.screen.focused().mypromptbox:run() end,
-              {description = "run prompt", group = "launcher"}),
+    awful.key({ modkey },            "r",   function() awful.spawn("rofi -show run") end,
+              {description = "rofi", group = "launcher"}),
 
     awful.key({ modkey }, "x",
               function ()
@@ -363,7 +357,7 @@ clientkeys = gears.table.join(
             c:raise()
         end,
         {description = "toggle fullscreen", group = "client"}),
-    awful.key({ modkey, "Shift"   }, "c",      function (c) c:kill()                         end,
+    awful.key({ modkey,           }, "q",      function (c) c:kill()                         end,
               {description = "close", group = "client"}),
     awful.key({ modkey, "Control" }, "space",  awful.client.floating.toggle                     ,
               {description = "toggle floating", group = "client"}),
@@ -480,7 +474,8 @@ awful.rules.rules = {
                      keys = clientkeys,
                      buttons = clientbuttons,
                      screen = awful.screen.preferred,
-                     placement = awful.placement.no_overlap+awful.placement.no_offscreen
+                     placement = awful.placement.no_overlap+awful.placement.no_offscreen,
+                     size_hints_honor = false
      }
     },
 
@@ -527,9 +522,8 @@ awful.rules.rules = {
         }
       }, properties = { floating = true }},
 
-    -- Add titlebars to normal clients and dialogs
     { rule_any = {type = { "normal", "dialog" }
-      }, properties = { titlebars_enabled = true }
+      }, properties = { titlebars_enabled = false }
     },
 
     -- Set Firefox to always map on the tag named "2" on screen 1.
@@ -560,7 +554,7 @@ client.connect_signal("request::titlebars", function(c)
         awful.button({ }, 1, function()
             c:emit_signal("request::activate", "titlebar", {raise = true})
             awful.mouse.client.move(c)
-        end),
+end),
         awful.button({ }, 3, function()
             c:emit_signal("request::activate", "titlebar", {raise = true})
             awful.mouse.client.resize(c)
@@ -569,7 +563,6 @@ client.connect_signal("request::titlebars", function(c)
 
     awful.titlebar(c) : setup {
         { -- Left
-            awful.titlebar.widget.iconwidget(c),
             buttons = buttons,
             layout  = wibox.layout.fixed.horizontal
         },
@@ -598,9 +591,51 @@ client.connect_signal("mouse::enter", function(c)
     c:emit_signal("request::activate", "mouse_enter", {raise = false})
 end)
 
-client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
-client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
+-- client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
+-- client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
 
+function log(text)
+    file = io.open("/home/nicky/.config/awesome/log.txt", "a")
+    io.output(file)
+    io.write(text .. "\n")
+    io.close()
+end
+
+client.connect_signal("manage", function (c)
+                          if c.class then    -- make sure it isn't null
+                              log("Manage signal for class: " .. c.class)
+                              if c.class ~= "firefox" then
+                                  c.shape = function(cr,w,h)
+                                      gears.shape.rounded_rect(cr,w,h,16)
+                                  end
+                              end
+                          end
+end)
+
+client.connect_signal("property::fullscreen", function (c)
+                          if c.class then    -- make sure it isn't null
+                              log("Fullscreen changed for class: " .. c.class)
+                          end
+
+                          if c.fullscreen == true then
+                              c.shape = function(cr,w,h)
+                                  gears.shape.rectangle(cr,w,h)
+                              end
+                          else
+                              c.shape = function(cr,w,h)
+                                  gears.shape.rounded_rect(cr,w,h,16)
+                              end
+                          end
+end)
+
+-- client.connect_signal("focus", function (c)
+--   if not c.maximized then
+--     c.shape = function(cr,w,h)
+--       gears.shape.rounded_rect(cr,w,h,16)
+--     end
+--   end
+-- end)
+
 -- autostart programs
-awful.spawn("compton")
+awful.spawn("zsh /home/nicky/.config/awesome/startup.sh")
