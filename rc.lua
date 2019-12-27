@@ -595,16 +595,9 @@ end)
 -- client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
 
-function log(text)
-    file = io.open("/home/nicky/.config/awesome/log.txt", "a")
-    io.output(file)
-    io.write(text .. "\n")
-    io.close()
-end
-
 client.connect_signal("manage", function (c)
                           if c.class then    -- make sure it isn't null
-                              log("Manage signal for class: " .. c.class)
+                              print("Manage signal for class: " .. c.class)
                               if c.class ~= "firefox" then
                                   c.shape = function(cr,w,h)
                                       gears.shape.rounded_rect(cr,w,h,16)
@@ -615,7 +608,7 @@ end)
 
 client.connect_signal("property::fullscreen", function (c)
                           if c.class then    -- make sure it isn't null
-                              log("Fullscreen changed for class: " .. c.class)
+                              print("Fullscreen changed for class: " .. c.class)
                           end
 
                           if c.fullscreen == true then
@@ -628,14 +621,6 @@ client.connect_signal("property::fullscreen", function (c)
                               end
                           end
 end)
-
--- client.connect_signal("focus", function (c)
---   if not c.maximized then
---     c.shape = function(cr,w,h)
---       gears.shape.rounded_rect(cr,w,h,16)
---     end
---   end
--- end)
 
 -- autostart programs
 awful.spawn("zsh /home/nicky/.config/awesome/startup.sh")
