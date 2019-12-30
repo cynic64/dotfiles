@@ -1,3 +1,5 @@
+print("------ START ------")
+
 -- If LuaRocks is installed, make sure that packages installed through it are
 -- found (e.g. lgi). If LuaRocks is not installed, do nothing.
 pcall(require, "luarocks.loader")
@@ -590,7 +592,6 @@ end)
 
 client.connect_signal("manage", function (c)
                           if c.class then    -- make sure it isn't null
-                              print("Manage signal for class: " .. c.class)
                               if c.class ~= "firefox" then
                                   c.shape = function(cr,w,h)
                                       gears.shape.rounded_rect(cr,w,h,16)
@@ -600,10 +601,6 @@ client.connect_signal("manage", function (c)
 end)
 
 client.connect_signal("property::fullscreen", function (c)
-                          if c.class then    -- make sure it isn't null
-                              print("Fullscreen changed for class: " .. c.class)
-                          end
-
                           if c.fullscreen == true then
                               c.shape = function(cr,w,h)
                                   gears.shape.rectangle(cr,w,h)
