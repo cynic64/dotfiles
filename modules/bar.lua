@@ -6,6 +6,8 @@ local watch = require('awful.widget.watch')
 local gears = require('gears')
 local cairo = require('lgi').cairo
 
+require("modules/helpers")
+
 -- set up socket
 local socket = require('socket')
 
@@ -18,17 +20,13 @@ local function try_connect_server()
         server = assert(require 'socket.unix' ())
 
         if server:connect(SOCKET_PATH) == nil then
-            print(string.format("[Bar] Couldn't connect to socket (%s), retry in 10s...", SOCKET_PATH))
+            log(string.format("[Bar] Couldn't connect to socket (%s), retry in 10s...", SOCKET_PATH))
             socket_connected = false
         else
-            print("[Bar] Successfully connected to socket")
+            log("[Bar] Successfully connected to socket")
             socket_connected = true
         end
     end
-end
-
-local function sleep(seconds)
-    os.execute(string.format("sleep %d", seconds))
 end
 
 -- called on manage/unmanage and sends info on the number of clients on each tag
@@ -42,7 +40,7 @@ local function update_window_counts()
             -- format for the information transferred in the socket: the # of
             -- clients of each tag, in order, separated by spaces
             if server:send(#tag:clients() .. " ") == nil then
-                print("[Bar] couldn't send new tag info")
+                log("[Bar] couldn't send new tag info")
                 socket_connected = false
                 return
             end
@@ -50,7 +48,7 @@ local function update_window_counts()
 
         server:send("\n")
     else
-        print("[Bar] Socket not connected")
+        log("[Bar] Socket not connected")
     end
 end
 
